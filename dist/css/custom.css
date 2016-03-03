@@ -1,0 +1,39 @@
+.sidebar-menu .treeview-menu>li>a>.ui-draggable>.fa {
+    width: 20px;
+}
+
+
+.ui-draggable .view {
+  display: block;
+}
+
+.sidebar-menu .ui-draggable .view {
+  display: none;
+}
+
+.sidebar-menu .ui-draggable.ui-draggable-dragging .view {
+  display: block;
+}
+
+.column {
+    background-color: #FFF;
+    border: 1px solid #DDD;
+    border-radius: 4px;
+    margin: 15px 0;
+    padding: 39px 19px 24px;
+    position: relative;
+}
+
+.column:after {
+    background-color: #F5F5F5;
+    border: 1px solid #DDD;
+    border-radius: 4px 0;
+    color: #9DA0A4;
+    content: "Column";
+    font-size: 12px;
+    font-weight: 700;
+    left: -1px;
+    padding: 3px 7px;
+    position: absolute;
+    top: -1px;
+}
