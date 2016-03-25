@@ -2,6 +2,8 @@ $(function () {
 
   "use strict";
 
+  // console.log('start!');
+
   // 可拖动
   $(".ui-draggable").draggable({
     handle: ".ui-draggable-handler",
@@ -33,6 +35,7 @@ $(function () {
 
   // 输出HTML页
   $('#view-html').click(function() {
+    // console.log('start make view html...');
     var factory = $('.factory').clone();
     var layouts = factory.children('.box');
     var result = $('<div></div>');
@@ -42,12 +45,27 @@ $(function () {
         result.append(layout);
       }
     });
+    // 初始化剪贴板功能插件，在复制生成的源码里使用
+    new Clipboard('.btn');
     $('#code-board').text(result.html());
-    $('#myModal').modal('toggle');
+    $('#final-html').modal('toggle');
   });
 
-  // 初始化剪贴板功能插件，在复制生成的源码里使用
-  new Clipboard('.btn');
+  // 显示预览
+  $('#view-page').click(function() {
+    var factory = $('.factory').clone();
+    var layouts = factory.children('.box');
+    var result = $('<div></div>');
+    layouts.each(function(index, element) {
+      if ($(this).css('display') != 'none') {
+        var layout = getLayoutFromBox($(this));
+        result.append(layout);
+      }
+    });
+    $('#page-board').html(result.html());
+    $('#final-page').modal('toggle');
+  });
+
 
   /**
    * 从Box中获取布局
@@ -92,6 +110,8 @@ $(function () {
    */
   var getItemsFromBox = function(box) {
     var items = box.children('.box-body').children().clone();
+    // console.log(box.children('.box-body').html());
+    // console.log(items.html());
     return items;
   }
 });
