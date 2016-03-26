@@ -52,6 +52,7 @@ Temporary Items
 /dist
 
 # Result Files
-index.html
 index2.html
+make_view.xml
+index.html
 .gitignore
