@@ -50,3 +50,8 @@ Temporary Items
 /node_modules
 /plugins
 /dist
+
+# Result Files
+index.html
+index2.html
+.gitignore

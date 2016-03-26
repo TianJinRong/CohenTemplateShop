@@ -2,8 +2,6 @@ $(function () {
 
   "use strict";
 
-  // console.log('start!');
-
   // 可拖动
   $(".ui-draggable").draggable({
     handle: ".ui-draggable-handler",
@@ -35,13 +33,13 @@ $(function () {
 
   // 输出HTML页
   $('#view-html').click(function() {
-    // console.log('start make view html...');
     var factory = $('.factory').clone();
     var layouts = factory.children('.box');
     var result = $('<div></div>');
     layouts.each(function(index, element) {
       if ($(this).css('display') != 'none') {
-        var layout = getLayoutFromBox($(this));
+        // var layout = getLayoutFromBox($(this));
+        var layout = get_item($(this));
         result.append(layout);
       }
     });
@@ -58,7 +56,7 @@ $(function () {
     var result = $('<div></div>');
     layouts.each(function(index, element) {
       if ($(this).css('display') != 'none') {
-        var layout = getLayoutFromBox($(this));
+        var layout = get_item($(this));
         result.append(layout);
       }
     });
@@ -66,52 +64,82 @@ $(function () {
     $('#final-page').modal('toggle');
   });
 
+  /**
+   * 打包子节点
+   * 一个root_node只会有一个item
+   *
+   * @param  {Array} root
+   * @return {Array}
+   */
+  var get_item = function(root_node) {
+    var item = root_node.clone();
+
+    if (is_item(root_node)) {
+      item = root_node.children('.box-body').first().children().first().clone();
+    } else {
+      return item;
+    }
+
+    if (is_layout(item)) {
+      // 如果是Row，一列一行地拼接控件
+      item = get_layout(item);
+    }
+
+    return item;
+  }
 
   /**
-   * 从Box中获取布局
-   * @param  {DOM} box
-   * @return {Array}     布局清单
+   * 判断指定item是否为item
+   * @param  {Array}  item
+   * @return {Boolean}
    */
-  var getLayoutFromBox = function(box) {
-    var layout = new Array();
-    var rows = box.children('.box-body').children().clone();
-    rows.each(function() {
-      var row = $(this);
-      var columns = $(this).children('div').clone();
-      row.empty();
-      columns.each(function() {
-        // 如果是布局，则提取布局
-        // 如果不是，则提取items
-        var column = $(this);
-        var subBoxs = $(this).children().clone();
-        column.empty();
-        if (subBoxs.find('.row>.connectedSortable')) {
-          subBoxs.each(function() {
-            var layout = getLayoutFromBox($(this));
-            column.append(layout);
-          });
-        } else {
-          subBoxs.each(function() {
-            var items = getItemsFromBox($(this));
-            column.append(items);
-          });
-        }
-        row.append(column);
+  var is_item = function(item) {
+    if (item.children('.ui-sortable-handle')) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 判断指定item是否为layout
+   * @param  {Array}  item
+   * @return {Boolean}
+   */
+  var is_layout = function(item) {
+    if (item.hasClass('row')) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * 打包layout
+   * @param  {Array} layout
+   * @return {Array}
+   */
+  var get_layout = function(layout) {
+    if (!is_layout(layout)) {
+      return layout;
+    }
+
+    var row = layout.clone();
+    var columns = row.children().clone();
+    row.empty();
+
+    $.each(columns, function(column_index, value) {
+      var column = $(this);
+      column.addClass($(value).attr('class'));
+      var children = $(value).children();
+      column.empty();
+      $.each(children, function(index, element) {
+        var node = $(element).clone();
+        var item = get_item(node);
+        column.append(item);
       });
-      layout.push(row);
+      row.append(column);
     });
-    return layout;
+
+    return row;
   }
 
-  /**
-   * 从容器中提取items
-   * @param  {Dom} box 容器
-   * @return {Dom}     items
-   */
-  var getItemsFromBox = function(box) {
-    var items = box.children('.box-body').children().clone();
-    // console.log(box.children('.box-body').html());
-    // console.log(items.html());
-    return items;
-  }
 });
