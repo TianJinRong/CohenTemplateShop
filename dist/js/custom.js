@@ -2,67 +2,74 @@ $(function () {
 
   "use strict";
 
-  // 可拖动
-  $(".ui-draggable").draggable({
-    handle: ".ui-draggable-handler",
-    connectToSortable: ".connectedSortable",
-    helper: function(event) {
-      // 克隆出item
-      var item = $(this).children('.hide').clone();
-      item.removeClass('hide');
-      return item;
-    },
-    zIndex: 999999,
-    stop: function(t, e) {
-      e.helper.removeAttr("style");
-      initConnectedSortable();
-    },
-  });
-
-  // 初始化排序功能
-  var initConnectedSortable = function() {
-    $(".connectedSortable").sortable({
-        placeholder: "sort-highlight",
-        connectWith: ".connectedSortable",
-        handle: ".box-header, .nav-tabs",
-        forcePlaceholderSize: true,
-        zIndex: 999999
-      });
-    $(".connectedSortable .box-header, .connectedSortable .nav-tabs-custom").css("cursor", "move");
+  var init = function() {
+    initDraggable();
+    initViewCodeFunction();
+    initViewFunction();
   }
 
-  // 输出HTML页
-  $('#view-html').click(function() {
-    var factory = $('.factory').clone();
-    var layouts = factory.children('.box');
-    var result = $('<div></div>');
-    layouts.each(function(index, element) {
-      if ($(this).css('display') != 'none') {
-        // var layout = getLayoutFromBox($(this));
-        var layout = get_item($(this));
-        result.append(layout);
-      }
+  // 初始化左侧控件栏，使其可拖动
+  var initDraggable = function() {
+    $(".ui-draggable").draggable({
+      handle: ".ui-draggable-handler",
+      connectToSortable: ".connectedSortable",
+      helper: function(event) {
+        // 克隆出item
+        var item = $(this).children('.hide').clone();
+        item.removeClass('hide');
+        return item;
+      },
+      zIndex: 999999,
+      stop: function(t, e) {
+        e.helper.removeAttr("style");
+        // 初始化排序功能
+        $(".connectedSortable").sortable({
+            placeholder: "sort-highlight",
+            connectWith: ".connectedSortable",
+            handle: ".box-header, .nav-tabs",
+            forcePlaceholderSize: true,
+            zIndex: 999999
+          });
+        $(".connectedSortable .box-header, .connectedSortable .nav-tabs-custom").css("cursor", "move");
+      },
     });
-    // 初始化剪贴板功能插件，在复制生成的源码里使用
-    new Clipboard('.btn');
-    $('#code-board').text(result.html());
-    $('#final-html').modal('toggle');
-  });
+  }
 
-  // 显示预览
-  $('#view-page').click(function() {
-    var factory = $('.factory').clone();
-    var layouts = factory.children('.box');
-    var result = $('<div></div>');
-    layouts.each(function(index, element) {
-      if ($(this).css('display') != 'none') {
-        var layout = get_item($(this));
-        result.append(layout);
-      }
+  // 初始化【查看代码】功能
+  var initViewCodeFunction = function() {
+    $('#view-html').click(function() {
+      var factory = $('.factory').clone();
+      var layouts = factory.children('.box');
+      var result = $('<div></div>');
+      layouts.each(function(index, element) {
+        if ($(this).css('display') != 'none') {
+          var layout = get_item($(this));
+          result.append(layout);
+        }
+      });
+      // 初始化剪贴板功能插件，在复制生成的源码里使用
+      new Clipboard('.btn');
+      $('#code-board').text(result.html());
+      $('#final-html').modal('toggle');
     });
-    $('#page-board').html(result.html());
-    $('#final-page').modal('toggle');
-  });
+  }
+
+  // 初始化【显示预览】功能
+  var initViewFunction = function() {
+    $('#view-page').click(function() {
+      var factory = $('.factory').clone();
+      var layouts = factory.children('.box');
+      var result = $('<div></div>');
+      layouts.each(function(index, element) {
+        if ($(this).css('display') != 'none') {
+          var layout = get_item($(this));
+          result.append(layout);
+        }
+      });
+      $('#page-board').html(result.html());
+      $('#final-page').modal('toggle');
+    });
+  }
 
   /**
    * 打包子节点
@@ -141,5 +148,7 @@ $(function () {
 
     return row;
   }
+
+  init();
 
 });
