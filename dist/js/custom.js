@@ -80,6 +80,9 @@ $(function () {
    */
   var get_item = function(root_node) {
     var item = root_node.clone();
+    if (!item) {
+      return item;
+    }
 
     if (is_item(root_node)) {
       item = root_node.children('.box-body').first().children().first().clone();
@@ -134,10 +137,11 @@ $(function () {
     row.empty();
 
     $.each(columns, function(column_index, value) {
-      var column = $(this);
+      var column = $(this).clone();
       column.addClass($(value).attr('class'));
-      var children = $(value).children();
       column.empty();
+
+      var children = $(value).children().clone();
       $.each(children, function(index, element) {
         var node = $(element).clone();
         var item = get_item(node);
